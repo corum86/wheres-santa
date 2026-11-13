@@ -3821,7 +3821,7 @@ class Component extends DCLogic {
   }
   function pncUpdate(dt) {
     const p = player; p.animT += dt; p.blinkT -= dt; if (p.blinkT < -0.14) p.blinkT = rnd(2, 4.5);
-    if (Q.tx != null) { const d = Q.tx - p.x; if (Math.abs(d) < 1.6) { p.x = Q.tx; Q.tx = null; p.vx = 0; } else { p.x += sign(d) * 74 * dt; p.face = sign(d); p.vx = sign(d) * 74; } } else p.vx = 0;
+    if (Q.tx != null) { const d = Q.tx - p.x; if (Math.abs(d) < 1.6) { p.x = Q.tx; Q.tx = null; p.vx = 0; } else { p.x += sign(d) * 83 * dt; p.face = sign(d); p.vx = sign(d) * 83; } } else p.vx = 0;
     if (Q.scene === 'loft' && !Q.flags.deer && Math.random() < dt * 5) burst(250 + rnd(-6, 44), FLOOR + 30, 1, ['#c07cff', '#9b6cf6'], 12, { g: -10, life: 1.2 });
     if (mode === 'play') {
       if (ptr.moved) { Q.cx = ptr.x; Q.cy = ptr.y; ptr.moved = false; }
@@ -4091,7 +4091,7 @@ class Component extends DCLogic {
     const k = mx && my ? 0.72 : 1, onIce = zCh.apply(null, zAtPx(Z.x, Z.y)) === 'I';
     if (Z.kb && Z.kb.t > 0) { Z.kb.t -= dt; Z.vx = Z.kb.vx; Z.vy = Z.kb.vy; }
     else if (onIce) { Z.vx += mx * k * 200 * dt; Z.vy += my * k * 200 * dt; const f = Math.max(0, 1 - 0.7 * dt); Z.vx *= f; Z.vy *= f; const s = Math.hypot(Z.vx, Z.vy); if (s > 94) { Z.vx *= 94 / s; Z.vy *= 94 / s; } }
-    else { Z.vx = mx * k * 74; Z.vy = my * k * 74; }
+    else { Z.vx = mx * k * 83; Z.vy = my * k * 83; }
     if (Z.atk > 0 && !onIce) { Z.vx *= 0.25; Z.vy *= 0.25; }
     const bump = zMove(Z, Z.vx * dt, Z.vy * dt, 5, 4);
     if (bump && act) { zBump(bump[0], bump[1]); if (onIce) { Z.vx *= 0.3; Z.vy *= 0.3; } }
@@ -4818,7 +4818,7 @@ class Component extends DCLogic {
     const canAct = p.control && mode === 'play' && !p.dead && p.hurtT <= 0;
     if (canAct) { mx = (keys.right ? 1 : 0) - (keys.left ? 1 : 0); wantJump = !!pressed.jump; held = !!keys.jump; wantAttack = !!pressed.attack; down = !!keys.down; if (p.revT > 0) mx = -mx; }
     else if (p.auto != null) { const d = p.auto - p.x; if (Math.abs(d) < 2) { p.x = p.auto; p.auto = null; p.vx = 0; } else { mx = sign(d); } held = true; }
-    const ice = p.ground && p.ground.ice; const maxV = p.auto != null ? 66 : 97;
+    const ice = p.ground && p.ground.ice; const maxV = p.auto != null ? 66 : 109;
     if (mx) {
       // instant turnaround on the ground, quick in the air (ice stays slippery on purpose)
       if (mx * p.vx < 0 && !ice) p.vx = p.onGround ? 0 : p.vx * 0.35;
