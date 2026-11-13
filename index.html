@@ -4087,7 +4087,7 @@ class Component extends DCLogic {
       mx = (keys.right ? 1 : 0) - (keys.left ? 1 : 0); my = (keys.up ? 1 : 0) - (keys.down ? 1 : 0);
       if (Z.atk <= 0) { if (mx && (!my || Z.face === 'l' || Z.face === 'r' || (Z.face === 'u' && my < 0) || (Z.face === 'd' && my > 0))) Z.face = mx > 0 ? 'r' : 'l'; if (my && !mx) Z.face = my > 0 ? 'u' : 'd'; }
       if (pressed.attack && Z.atkCd <= 0) { Z.atk = 0.24; Z.atkCd = 0.32; Z.hitSet = new Set(); SFX.swing(); zCut(); }
-    } else if (Z.auto) { const d = Z.auto[1] - Z.y; my = Math.abs(d) < 1 ? 0 : sign(d); if (!my) Z.auto = null; Z.face = my > 0 ? 'u' : 'd'; }
+    } else if (Z.auto) { const d = Z.auto[1] - Z.y; my = Math.abs(d) < 1 ? 0 : sign(d); if (!my) Z.auto = null; else { Z.autoT = (Z.autoT || 0) + dt; if (Z.autoT > 2.5) { Z.auto = null; my = 0; } } Z.face = my > 0 ? 'u' : 'd'; if (!Z.auto) Z.autoT = 0; }
     const k = mx && my ? 0.72 : 1, onIce = zCh.apply(null, zAtPx(Z.x, Z.y)) === 'I';
     if (Z.kb && Z.kb.t > 0) { Z.kb.t -= dt; Z.vx = Z.kb.vx; Z.vy = Z.kb.vy; }
     else if (onIce) { Z.vx += mx * k * 200 * dt; Z.vy += my * k * 200 * dt; const f = Math.max(0, 1 - 0.7 * dt); Z.vx *= f; Z.vy *= f; const s = Math.hypot(Z.vx, Z.vy); if (s > 94) { Z.vx *= 94 / s; Z.vy *= 94 / s; } }
@@ -4197,7 +4197,8 @@ class Component extends DCLogic {
   }
   function* zRespawn() {
     const e = Z.entry; player.hp = player.maxHp; player.dead = false; player.inv = 1.2; player.hurtT = 0;
-    zEnter(e.id, e.x, e.y); fadeTo(0, 0.4); yield wait(0.25);
+    const inBoss = e.id === 'gazebo' && !Z.flags.boss;
+    zEnter(e.id, e.x, inBoss ? Math.max(e.y, 34) : e.y); fadeTo(0, 0.4); yield wait(0.25);
     if (e.id === 'gazebo' && !Z.flags.boss) { yield* zBossIntro(); return; }
     zGo1(false);
   }
@@ -4211,7 +4212,7 @@ class Component extends DCLogic {
     yield wait(0.3); toast(T('zC1'), 3.5); mode = 'play'; player.control = true;
   }
   function* zBossIntro() {
-    playSong(null); Z.auto = [Z.x, 34]; const b = zBossMake(); yield until(() => !Z.auto);
+    playSong(null); Z.autoT = 0; Z.auto = Z.y < 34 ? [Z.x, 34] : null; const b = zBossMake(); yield until(() => !Z.auto);
     zSet(9, 7, 'X'); zSet(10, 7, 'X'); zRender(); SFX.thud(); shake(2, 0.4); yield wait(0.4);
     if (!Z.flags.bossSeen) { Z.flags.bossSeen = true; yield say('capt', T('zb1')); yield say('kid', T('zb2')); yield say('capt', T('zb3')); }
     toast(T('tBossZ'), 5); b.st = 'watch'; b.t = 1; pushUI({ bossOn: true, bossLabel: T('nCaptU'), bossHp: b.hp, bossMax: b.max }); playSong('boss'); mode = 'play'; player.control = true;
