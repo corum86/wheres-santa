@@ -563,7 +563,7 @@ class Component extends DCLogic {
     };
     this.__h = {
       cv: (el) => { if (el) this._cv = el; }, rt: (el) => { if (el) this._rt = el; },
-      start: G((g) => g.start(false)), skipStory: G((g) => g.start(true)), next: G((g) => g.next()), tUpDown: T('up', true), tUpUp: T('up', false), tPodDown: T('pod', true), tPodUp: T('pod', false), tDownDown: T('down', true), tDownUp: T('down', false), mute: G((g) => g.toggleMute()),
+      start: G((g) => g.start(false)), skipStory: G((g) => g.start(true)), next: G((g) => { g.next(); g.focus(); }), tUpDown: T('up', true), tUpUp: T('up', false), tPodDown: T('pod', true), tPodUp: T('pod', false), tDownDown: T('down', true), tDownUp: T('down', false), mute: G((g) => g.toggleMute()),
       hint: G((g) => { g.hint(); g.focus(); }), pause: G((g) => g.pause()),
       fs: () => this._fsToggle(),
       stDown: (ev) => { if (!ev) return; if (ev.preventDefault) ev.preventDefault(); if (this._st) return; const z = ev.currentTarget; try { z.setPointerCapture(ev.pointerId); } catch (err) {} this._st = { id: ev.pointerId, z, ox: 0, oy: 0, d: { left: false, right: false, up: false, down: false } };
@@ -5219,6 +5219,11 @@ class Component extends DCLogic {
   function onPointerMove(ev) { ptrPos(ev); }
   function onPointerDown(ev) { if (ev && ev.target === canvas) { ptrPos(ev); ptr.click = true; if (dlg.on && !paused) clickAdvance = true; } audioInit(); if (curSong && !songTracks) { const n = curSong; curSong = null; playSong(n); } }
   function focusRoot() { try { root.focus({ preventScroll: true }); } catch (err) { } }
+  // keys pressed while the page itself has focus (e.g. the clicked button just vanished) still reach the game
+  function stray(ev) { const t = ev.target; return !root.contains(t) && (t === document.body || t === document.documentElement || t === document || !t); }
+  function onWinKeyDown(ev) { if (!stray(ev) || mode === 'title' && !KEYMAP[ev.code]) return; focusRoot(); onKeyDown(ev); }
+  function onWinKeyUp(ev) { if (stray(ev)) onKeyUp(ev); }
+  try { window.addEventListener('keydown', onWinKeyDown); window.addEventListener('keyup', onWinKeyUp); } catch (err) { }
   root.addEventListener('keydown', onKeyDown); root.addEventListener('keyup', onKeyUp); root.addEventListener('focusout', onFocusOut); root.addEventListener('pointerdown', onPointerDown); root.addEventListener('pointermove', onPointerMove);
 
   // ================= MAIN LOOP =================
@@ -5303,6 +5308,7 @@ class Component extends DCLogic {
     touch: (a, down) => { audioInit(); if (down) pressed[a] = true; if (down && a === 'jump') { pressed.hop = true; pressed.k_Space = true; } if (a === 'jump') keys.hop = !!down; keys[a] = !!down; if (down && a === 'jump' && dlg.on) clickAdvance = true; },
     destroy: () => {
       alive = false; cancelAnimationFrame(raf);
+      try { window.removeEventListener('keydown', onWinKeyDown); window.removeEventListener('keyup', onWinKeyUp); } catch (err) { }
       root.removeEventListener('keydown', onKeyDown); root.removeEventListener('keyup', onKeyUp); root.removeEventListener('focusout', onFocusOut); root.removeEventListener('pointerdown', onPointerDown);
       try { for (const t of allTextures) t.dispose(); for (const k in geoCache) geoCache[k].dispose(); matCache.forEach((m) => m.dispose()); gfxDispose(); renderer.dispose(); } catch (err) { }
       try { if (ac && ac.close) ac.close(); } catch (err) { }
