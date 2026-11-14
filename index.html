@@ -33,6 +33,7 @@ a{color:#ffd84a}a:hover{color:#ffe9a8}
 .xm-pop{animation:xmPop .35s ease-out}
 .xm-glow{animation:xmPop .35s ease-out, xmGlow 1.6s ease-in-out .35s infinite}
 .xm-touch{touch-action:none;user-select:none;-webkit-user-select:none}
+.xm-hit{position:relative}.xm-hit::before{content:'';position:absolute;inset:-18px;border-radius:50%}
 .xm-help span{white-space:nowrap}
 @keyframes xmBlink{50%{opacity:0}}
 @keyframes xmBanner{0%{transform:scale(.4);opacity:0}10%{transform:scale(1.12);opacity:1}18%{transform:scale(1)}82%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04)}}
@@ -137,10 +138,10 @@ a{color:#ffd84a}a:hover{color:#ffe9a8}
 <div style="position: absolute; left: {{ stKx }}px; top: {{ stKy }}px; width: 56px; height: 56px; margin: -28px 0 0 -28px; box-sizing: border-box; border-radius: 50%; border: 3px solid rgba(255,255,255,{{ stA }}); background: rgba(255,216,74,{{ stKA }}); box-shadow: 0 3px 0 rgba(13,16,48,0.6); pointer-events: none"></div>
 </div>
 </sc-if>
-<div style="position: absolute; right: 22px; bottom: 22px; display: flex; gap: 14px; align-items: flex-end">
-<button class="xm-touch" type="button" aria-label="{{ t.starL }}" onPointerDown="{{ tPodDown }}" onPointerUp="{{ tPodUp }}" onPointerLeave="{{ tPodUp }}" onPointerCancel="{{ tPodUp }}" style="opacity: {{ opPod }}; transition: opacity 0.12s; display: {{ starDisp }}; width: 76px; height: 76px; margin-bottom: 64px; border-radius: 50%; background: rgba(201,149,42,0.8); border: 3px solid #f4f7ff; align-items: center; justify-content: center"><svg width="36" height="36" viewBox="0 0 9 9" shape-rendering="crispEdges" aria-hidden="true"><path fill="#ffe066" d="M4 0h1v2H4z M3 2h3v1H3z M0 3h9v1H0z M1 4h7v1H1z M2 5h5v1H2z M1 6h3v1H1z M5 6h3v1H5z M1 7h2v1H1z M6 7h2v1H6z"></path></svg></button>
-<button class="xm-touch" type="button" aria-label="{{ atkLabel }}" onPointerDown="{{ tAtkDown }}" onPointerUp="{{ tAtkUp }}" onPointerLeave="{{ tAtkUp }}" onPointerCancel="{{ tAtkUp }}" style="opacity: {{ opAtk }}; transition: opacity 0.12s; width: 84px; height: 84px; border-radius: 50%; background: rgba(224,51,63,0.7); border: 3px solid #f4f7ff; color: #ffffff; font-family: 'Press Start 2P', monospace; font-size: 18px">X</button>
-<button class="xm-touch" type="button" aria-label="{{ jumpLabel }}" onPointerDown="{{ tJumpDown }}" onPointerUp="{{ tJumpUp }}" onPointerLeave="{{ tJumpUp }}" onPointerCancel="{{ tJumpUp }}" style="opacity: {{ opJump }}; transition: opacity 0.12s; display: {{ jumpDisp }}; width: 96px; height: 96px; margin-bottom: 30px; border-radius: 50%; background: rgba(47,154,82,0.75); border: 3px solid #f4f7ff; color: #ffffff; font-family: 'Press Start 2P', monospace; font-size: 13px">{{ t.jumpShort }}</button>
+<div style="position: absolute; right: 26px; bottom: 26px; display: flex; gap: 36px; align-items: flex-end">
+<button class="xm-touch xm-hit" type="button" aria-label="{{ t.starL }}" onPointerDown="{{ tPodDown }}" onPointerUp="{{ tPodUp }}" onPointerLeave="{{ tPodUp }}" onPointerCancel="{{ tPodUp }}" style="opacity: {{ opPod }}; transition: opacity 0.12s; display: {{ starDisp }}; width: 84px; height: 84px; margin-bottom: 64px; border-radius: 50%; background: rgba(201,149,42,0.8); border: 3px solid #f4f7ff; align-items: center; justify-content: center"><svg width="36" height="36" viewBox="0 0 9 9" shape-rendering="crispEdges" aria-hidden="true"><path fill="#ffe066" d="M4 0h1v2H4z M3 2h3v1H3z M0 3h9v1H0z M1 4h7v1H1z M2 5h5v1H2z M1 6h3v1H1z M5 6h3v1H5z M1 7h2v1H1z M6 7h2v1H6z"></path></svg></button>
+<button class="xm-touch xm-hit" type="button" aria-label="{{ atkLabel }}" onPointerDown="{{ tAtkDown }}" onPointerUp="{{ tAtkUp }}" onPointerLeave="{{ tAtkUp }}" onPointerCancel="{{ tAtkUp }}" style="opacity: {{ opAtk }}; transition: opacity 0.12s; width: 92px; height: 92px; border-radius: 50%; background: rgba(224,51,63,0.7); border: 3px solid #f4f7ff; color: #ffffff; font-family: 'Press Start 2P', monospace; font-size: 18px">X</button>
+<button class="xm-touch xm-hit" type="button" aria-label="{{ jumpLabel }}" onPointerDown="{{ tJumpDown }}" onPointerUp="{{ tJumpUp }}" onPointerLeave="{{ tJumpUp }}" onPointerCancel="{{ tJumpUp }}" style="opacity: {{ opJump }}; transition: opacity 0.12s; display: {{ jumpDisp }}; width: 104px; height: 104px; margin-bottom: 30px; border-radius: 50%; background: rgba(47,154,82,0.75); border: 3px solid #f4f7ff; color: #ffffff; font-family: 'Press Start 2P', monospace; font-size: 13px">{{ t.jumpShort }}</button>
 </div>
 </sc-if>
 
@@ -2637,7 +2638,7 @@ class Component extends DCLogic {
   function iceWallPB() { const pb = new PB(10, 70); for (let y = 0; y < 70; y++) for (let x = 0; x < 10; x++) { const edge = Math.abs(x - 5) + (y % 7) * 0.3; if (edge < 5) pb.set(x, y, (x + y) % 5 === 0 ? '#ffffff' : '#9fd4f4'); } pb.outline('#2a6a9a'); return pb; }
   function decoMeltRemains(x) { deco(ART.puddle, x - 23, FLOOR - 3, -4); deco(ART.hat, x - 18, FLOOR - 2, -3); deco(ART.carrot, x + 4, FLOOR - 1, -2); }
   function bossUpdate(e, dt) {
-    e.t -= dt; e.inv -= dt; e.flashT -= dt; const B = ART.boss; const ang = e.phase === 2; let fr = ang ? B.aidle : B.idle;
+    e.t -= dt; e.inv -= dt; e.flashT -= dt; if (e.state !== 'air') e.grav = null; const B = ART.boss; const ang = e.phase === 2; let fr = ang ? B.aidle : B.idle;
     switch (e.state) {
       case 'dormant': case 'gone': return;
       case 'rise': { const k = clamp(1 - e.t / 1.4, 0, 1); e.y = lerp(FLOOR - 46, FLOOR, k); if (Math.random() < 0.5) dust(e.x + rnd(-16, 16), FLOOR + 2, 1, '#ffffff'); if (e.t <= 0) { e.y = FLOOR; e.state = 'wait'; e.pile.visible = false; burst(e.x, FLOOR + 8, 24, ['#ffffff', '#cfdcec'], 110); SFX.roar(); shake(3, 0.4); } break; }
@@ -2645,8 +2646,8 @@ class Component extends DCLogic {
       case 'idle': e.vx = 0; physics(e, dt); if (Math.abs(player.x - e.x) > 2) e.face = sign(player.x - e.x); if (e.t <= 0) nextBossMove(e); break;
       case 'windup': fr = ang ? B.aup : B.up; physics(e, dt); if (e.t <= 0) { throwBalls(e); e.state = 'throw'; e.t = 0.35; } break;
       case 'throw': fr = ang ? B.afwd : B.fwd; physics(e, dt); if (e.t <= 0) { e.state = 'idle'; e.t = ang ? 0.55 : 0.95; } break;
-      case 'hopPrep': fr = ang ? B.asquash : B.squash; physics(e, dt); if (e.t <= 0) { e.vy = 300; e.vx = clamp((player.x - e.x) * 1.15, -135, 135); e.state = 'air'; SFX.jump(); } break;
-      case 'air': fr = ang ? B.astretch : B.stretch; physics(e, dt); e.x = clamp(e.x, 1112, 1406); if (e.onGround && e.vy <= 0) { e.vx = 0; e.state = 'land'; e.t = 0.28; shake(3, 0.3); SFX.thud(); burst(e.x, FLOOR + 2, 14, ['#ffffff', '#cfdcec'], 90, { up: true }); if (difficulty() !== 'Easy' || player.x < e.x) addRoller(e.x - 16, -1); if (difficulty() !== 'Easy' || player.x >= e.x) addRoller(e.x + 16, 1); if (Math.abs(player.x - e.x) < 34 && player.onGround) hurtPlayer(1, e.x); } break;
+      case 'hopPrep': fr = ang ? B.asquash : B.squash; physics(e, dt); if (e.t <= 0) { e.vy = 330; e.grav = 500; e.vx = clamp((player.x - e.x) * 0.61, -72, 72); e.state = 'air'; SFX.jump(); } break;
+      case 'air': fr = ang ? B.astretch : B.stretch; physics(e, dt); e.x = clamp(e.x, 1112, 1406); if (e.onGround && e.vy <= 0) { e.vx = 0; e.grav = null; e.state = 'land'; e.t = 0.28; shake(3, 0.3); SFX.thud(); burst(e.x, FLOOR + 2, 14, ['#ffffff', '#cfdcec'], 90, { up: true }); if (difficulty() !== 'Easy' || player.x < e.x) addRoller(e.x - 16, -1); if (difficulty() !== 'Easy' || player.x >= e.x) addRoller(e.x + 16, 1); if (Math.abs(player.x - e.x) < 34 && player.onGround) hurtPlayer(1, e.x); } break;
       case 'land': fr = ang ? B.asquash : B.squash; physics(e, dt); if (e.t <= 0) { e.hops--; if (e.hops > 0) { e.state = 'hopPrep'; e.t = ang ? 0.14 : 0.22; } else { e.state = 'idle'; e.t = ang ? 0.5 : 0.9; } } break;
       case 'hurt': fr = B.ouch; e.vx *= 0.9; physics(e, dt); if (e.t <= 0) { e.state = 'idle'; e.t = 0.35; } break;
       case 'melt': fr = B.ouch; break;
